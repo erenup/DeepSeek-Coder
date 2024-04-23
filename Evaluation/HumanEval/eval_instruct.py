@@ -27,7 +27,18 @@ def generate_one(example, lang, tokenizer, model):
         add_generation_prompt=True
     ).to(model.device)
 
+    
     stop_id = tokenizer.convert_tokens_to_ids("<|EOT|>")
+    if stop_id is None:
+        tokenizer.chat_template = "{% if not add_generation_prompt is defined %}{% set add_generation_prompt = false %}{% endif %}{% for message in messages %}{{'' + message['role'] + '\n' + message['content'] + '' + '\n'}}{% endfor %}{% if add_generation_prompt %}{{ '\n' }}{% endif %}"
+        print(f"input:\n{tokenizer.apply_chat_template([{'role': 'user', 'content': prompt }], tokenize=False, add_generation_prompt=True)}")
+        inputs = tokenizer.apply_chat_template(
+            [{'role': 'user', 'content': prompt }],
+            return_tensors="pt",
+            add_generation_prompt=True
+            ).to(model.device)
+        stop_id = tokenizer.eos_token_id
+        print(f"stop_id: {stop_id}")
     assert isinstance(stop_id, int), "Invalid tokenizer, EOT id not found"
 
     outputs = model.generate(
