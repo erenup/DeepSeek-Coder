@@ -6,7 +6,6 @@ from finetune_deepseekcoder import EOT_TOKEN, IGNORE_INDEX
 def build_instruction_prompt(instruction: str):
         return '''
     You are an AI programming assistant, utilizing the Open Coder model, developed by erenup, and you only answer questions related to computer science. For politically sensitive questions, security and privacy issues, and other non-computer science questions, you will refuse to answer.
-    ### Instruction:
     {}
     '''.format(instruction.strip()).lstrip()
 
@@ -21,12 +20,12 @@ for conversation in code_feedback:
             instruction = build_instruction_prompt(message['content'])
         else:
             if message['role'] == "user":
-                instruction += f"### Instruction:\n{message['content']}\n"  # build up instruction content for next assistant output
+                instruction += f"{message['content']}\n"  # build up instruction content for next assistant output
             elif message['role'] == 'assistant':
-                entry = {"instruction": instruction, "output": f"### Response:\n{message['content']}{EOT_TOKEN}\n"}
+                entry = {"instruction": instruction, "output": f"{message['content']}\n{EOT_TOKEN}\n"}
                 preprocessed_feedback.append(entry)
 
-                instruction += f"### Response:\n{message['content']}{EOT_TOKEN}\n"
+                instruction += f"{message['content']}\n{EOT_TOKEN}\n"
 
 jsonl_file_path = "./combined_dataset.jsonl"
 with open(jsonl_file_path, 'w') as jsonl_file:

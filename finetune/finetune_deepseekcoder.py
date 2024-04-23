@@ -135,6 +135,10 @@ def train():
         use_fast=True,
         trust_remote_code=True
     )
+    if tokenizer.pad_token is None:
+        print(f"set pad token to eos token")
+        tokenizer.pad_token = tokenizer.eos_token
+        tokenizer.bos_token_id = tokenizer.eos_token_id
 
     print("PAD Token:", tokenizer.pad_token, tokenizer.pad_token_id)
     print("BOS Token", tokenizer.bos_token, tokenizer.bos_token_id)
