@@ -110,11 +110,13 @@ class DataCollatorForSupervisedDataset(object):
         )
 
 def train_tokenize_function(examples, tokenizer):
-    sources = [
-        build_instruction_prompt(instruction)
-        for instruction in examples['instruction']
-    ]
-    targets = [f"{output}\n{EOT_TOKEN}" for output in examples['output']]
+    #sources = [
+    #    build_instruction_prompt(instruction)
+    #    for instruction in examples['instruction']
+    #]
+    #targets = [f"{output}\n{EOT_TOKEN}" for output in examples['output']]
+    sources = [instruction for instruction in examples['instruction']]
+    targets = [output for output in examples['output']]
     data_dict = preprocess(sources, targets, tokenizer)
     return data_dict
 
